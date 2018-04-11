@@ -44,17 +44,20 @@
             font-size: 20px
 
         .name
+            flex: 1
             display: flex
             height: 40px
-            line-height: 20px
-            // justify-content: center
-            align-items: center
-            flex: 1
             padding-left: 10px
-            text-align: left
-            @include max-text(2)
+            span
+                @include max-text(2)
+                width: 100%
+                justify-content: center
+                max-height: 40px
+                line-height: 20px
 
         .el-icon-plus
+            display: block
+            margin: 0 auto
             font-size: 20px
             color: $gray
         .el-icon-close
@@ -63,12 +66,16 @@
             color: $red
             width: 20px
             height: 20px
+            top: 50%
+            margin-top: -10px
             line-height: 20px
             text-align: center
             opacity: 0
             transition: all .3s ease
             pointer-events: none
         .el-icon-check
+            display: block
+            margin: 0 auto
             color: $green
             font-size: 24px
         &.edit

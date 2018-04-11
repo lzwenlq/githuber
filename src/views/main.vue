@@ -2,7 +2,7 @@
     .main
         .main__aside(:class="{show: config.showBookmark}")
             bookmark(
-                @tap="onlinkTapAction"
+                @tap="onBookmarkTapAction"
                 @add="onBookmarkAddAction"
                 @remove="onBookmarkRemoveAction"
             )
@@ -23,20 +23,24 @@
                     :lang="config.lang"
                     :since="config.since"
                     :showBookmark="config.showBookmark"
-                    @tap="onlinkTapAction"
+                    @tap="onLinkTapAction"
                     @update="onConfigUpdateAction"
                 )
         .main__setting(:class="{show: config.showSetting}")
-            .main__setting-title 设置
+            .main__setting-title {{$t('Setting')}}
             el-form.main__setting-content()
-                el-form-item(:label="i18n.openSearchInNewTap")
-                    el-switch(v-model="config.openSearchInNewTap")
-                el-form-item(:label="i18n.openLinkInNewTap")
-                    el-switch(v-model="config.openLinkInNewTap")
-                el-form-item(:label="i18n.openBookmarkInNewTap")
-                    el-switch(v-model="config.openBookmarkInNewTap")
-                el-form-item(:label="i18n.showBookmark")
+                el-form-item(:label="$t('openSearchInNewTab')")
+                    el-switch(v-model="config.openSearchInNewTab")
+                el-form-item(:label="$t('openLinkInNewTab')")
+                    el-switch(v-model="config.openLinkInNewTab")
+                el-form-item(:label="$t('openBookmarkInNewTab')")
+                    el-switch(v-model="config.openBookmarkInNewTab")
+                el-form-item(:label="$t('showBookmark')")
                     el-switch(v-model="config.showBookmark")
+                el-form-item(:label="$t('Language')")
+                    el-select(v-model="config.locale")
+                        el-option(label="中文" value="zh")
+                        el-option(label="English" value="en")
 
         dialog-bookmark-edit(v-model="dialog")
 </template>
@@ -44,7 +48,6 @@
 <script>
 import { mapActions } from 'vuex';
 import octicons from 'octicons';
-import i18n from '../services/i18n';
 import searchBox from './components/search.vue';
 import githubTrending from './components/github-trending.vue';
 import bookmark from './components/bookmark.vue';
@@ -58,7 +61,6 @@ export default {
     data() {
         const cfg = storage.getItem('GITHUBER_CONFIGURATION');
         return {
-            i18n,
             octicons,
             config: { ...config, ...cfg },
             dialog: {
@@ -68,13 +70,14 @@ export default {
         };
     },
     mounted() {
+        document.title = this.$t('NewTabs');
     },
     methods: {
         ...mapActions('bookmark', ['removeBookmark']),
 
         // 搜索事件
         onSearchAction(url) {
-            if (this.config.openSearchInNewTap) {
+            if (this.config.openSearchInNewTab) {
                 window.open(url);
             } else {
                 window.location.href = url;
@@ -82,8 +85,17 @@ export default {
         },
 
         // 点击链接跳转
-        onlinkTapAction(url) {
-            if (this.config.openLinkInNewTap) {
+        onLinkTapAction(url) {
+            if (this.config.openLinkInNewTab) {
+                window.open(url);
+            } else {
+                window.location.href = url;
+            }
+        },
+
+        // 点击书签跳转
+        onBookmarkTapAction(url) {
+            if (this.config.openBookmarkInNewTab) {
                 window.open(url);
             } else {
                 window.location.href = url;
@@ -115,11 +127,15 @@ export default {
         // 删除书签
         async onBookmarkRemoveAction(item) {
             await this.removeBookmark(item);
-            this.$message({
-                message: this.i18n.DeleteSuccess,
-                type: 'success'
-            });
+            // this.$message({
+            //     message: this.$t('DeleteSuccess'),
+            //     type: 'success'
+            // });
         },
+
+        onLocaleChange() {
+            this.$i18n.locale = this.config.locale;
+        }
     },
     watch: {
         config: {
@@ -127,7 +143,8 @@ export default {
                 storage.setItem('GITHUBER_CONFIGURATION', this.config);
             },
             deep: true,
-        }
+        },
+        'config.locale': 'onLocaleChange'
     }
 };
 </script>

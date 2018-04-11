@@ -603,6 +603,11 @@ export default [
         color: '#178600',
     },
     {
+        name: 'C#',
+        value: 'C#',
+        color: '#178600',
+    },
+    {
         name: 'Emacs Lisp',
         value: 'Emacs-Lisp',
         color: '#c065db',
@@ -1003,9 +1008,9 @@ export default [
         color: '#94B0C7',
     },
     {
-        name: 'Unknown Languages',
+        name: 'unknown',
         value: 'unknown',
-        color: '#000000',
+        color: '#aaa',
     },
 ];
 
